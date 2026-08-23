@@ -5,17 +5,21 @@ import (
 	"strings"
 )
 
+const LevelPanic = slog.LevelError + 2
 const LevelFatal = slog.LevelError + 4
 
 // ParseLevel parses a level string into a slog.Level value.
-// Get fatal level for "FATAL" string, otherwise use slog.Level.UnmarshalText.
+// Get custom panic/fatal or default levels.
 // If the string is not a valid level, it returns slog.LevelInfo.
 func ParseLevel(s string) slog.Level {
-	if strings.EqualFold(strings.ToUpper(s), "FATAL") {
-		return LevelFatal
-	}
-
 	var lvl slog.Level
+
+	switch strings.ToUpper(s) {
+	case "PANIC":
+		lvl = LevelPanic
+	case "FATAL":
+		lvl = LevelFatal
+	}
 
 	_ = lvl.UnmarshalText([]byte(s))
 
